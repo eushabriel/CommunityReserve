@@ -6,3 +6,4 @@ coverage/
 *.log
 .env*
 !.env.example
+community_reserve.db
