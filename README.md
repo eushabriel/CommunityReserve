@@ -10,16 +10,17 @@ npm run test // for now
 
 
 # TEST CREDENTIALS 
+> [!NOTE]
+> i'm including the db para lang 'di paulit-ulit creation ng test accounts. DB will be deleted (reset) 'pag ipapasa na.
+
 Format: [email] [password]
 - `admin@admin.its admin`
 - `polgabriel09@gmail.com admin`
 - `test@test.its test`
 
-
-[!NOTE] i'm including the db para lang 'di paulit-ulit creation ng test accounts. DB will be deleted (reset) 'pag ipapasa na.
-
 # NOTES 
-[!NOTE] `//comment` at the end is priority level
+> [!NOTE]
+> `//comment` at the end is priority level
 
 ### ADMIN:
 - ~~should see all reservations regardless of acct // high~~
