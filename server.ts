@@ -8,6 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const db = new Database("community_reserve.db");
+db.pragma("foreign_keys = ON");
 
 // Initialize database
 db.exec(`
@@ -65,8 +66,11 @@ async function startServer() {
 
   app.post("/api/register", (req, res) => {
     const { email, password, name } = req.body;
-    // For testing: make the specific user an admin
-    const role = email === 'polgabriel09@gmail.com' ? 'admin' : 'resident';
+
+    //For testing: list of admin emails
+    const admins = ["polgabriel09@gmail.com", "admin@admin.its"];
+
+    const role = admin.includes(email) ? 'admin' : 'resident';
     try {
       const info = db.prepare("INSERT INTO users (email, password, name, role) VALUES (?, ?, ?, ?)").run(email, password, name, role);
       res.json({ id: info.lastInsertRowid, email, name, role });
@@ -77,12 +81,16 @@ async function startServer() {
 
   app.post("/api/login", (req, res) => {
     const { email, password } = req.body;
-    const user = db.prepare("SELECT * FROM users WHERE email = ? AND password = ?").get(email, password);
-    if (user) {
-      res.json(user);
-    } else {
-      res.status(401).json({ error: "Invalid credentials" });
-    }
+    const user = db.prepare("SELECT * FROM users WHERE email = ? AND password = ?").get(email, password) as any;
+
+    if (!user) return res.status(401).json({ error: "Invalid credentials" });
+
+    res.json({
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role
+    })
   });
 
   app.get("/api/reservations", (req, res) => {
@@ -111,6 +119,14 @@ async function startServer() {
   app.post("/api/reservations", (req, res) => {
     const { userId, facilityId, startTime, endTime, purpose } = req.body;
     
+    if (!userId || !facilityId || !startTime || !endTime) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    if (new Date(endTime) <= new Date(startTime)) {
+      return res.status(400).json({ error: "End time must be after start time" });
+    }
+
     // Check for conflicts
     const conflict = db.prepare(`
       SELECT * FROM reservations 
@@ -137,6 +153,10 @@ async function startServer() {
   app.patch("/api/reservations/:id", (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
+
+    const validStatuses = ["pending", "approved", "rejected"];
+    if (!validStatuses.includes(status)) return res.status(400).json({ error: "Invalid status" });
+
     db.prepare("UPDATE reservations SET status = ? WHERE id = ?").run(status, id);
     res.json({ success: true });
   });
