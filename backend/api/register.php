@@ -14,6 +14,14 @@ $email = trim($data['email'] ?? '');
 $password = trim($data['password'] ?? '');
 $name = trim($data['name'] ?? '');
 
+if ($email === '' || $password === '' || $name === '') {
+    jsonResponse(['error' => 'Missing required fields'], 400);
+}
+
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    jsonResponse(['error' => 'Please enter a valid email address.'], 400);
+}
+
 if (
     strlen($password) < 8 ||
     !preg_match('/[0-9]/', $password) ||
@@ -22,10 +30,6 @@ if (
     jsonResponse([
         'error' => 'Password must be at least 8 characters and include a number and symbol.'
     ], 400);
-}
-
-if ($email === '' || $password === '' || $name === '') {
-    jsonResponse(['error' => 'Missing required fields'], 400);
 }
 
 // FOR TESTING: sample admin emails
