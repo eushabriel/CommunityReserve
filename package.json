@@ -1,0 +1,15 @@
+{
+  "name": "community-reserve",
+  "private": true,
+  "scripts": {
+    "setup": "npm install && npm --prefix frontend install",
+    "dev": "concurrently -n FRONTEND,PHP -c blue,green \"npm run dev:frontend\" \"npm run dev:php\"",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "dev:php": "php -S localhost:8000 backend/router.php",
+    "build": "npm --prefix frontend run build",
+    "preview": "npm --prefix frontend run preview"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

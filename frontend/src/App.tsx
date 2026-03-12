@@ -53,14 +53,14 @@ const App = () => {
   };
 
   const fetchFacilities = async () => {
-    const res = await fetch('/api/facilities.php');
+    const res = await fetch('/api/facilities');
     const data = await res.json();
     setFacilities(data);
   };
 
   const fetchReservations = async () => {
     if (!user) return;
-    const res = await fetch(`/api/reservations.php?userId=${user.id}&role=${user.role}`);
+    const res = await fetch(`/api/reservations?userId=${user.id}&role=${user.role}`);
     const data = await res.json();
     setReservations(data);
   };
@@ -70,7 +70,7 @@ const App = () => {
     setLoading(true);
     setError('');
     try {
-      const res = await fetch('/api/login.php', {
+      const res = await fetch('/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: authForm.email, password: authForm.password })
@@ -94,7 +94,7 @@ const App = () => {
     setLoading(true);
     setError('');
     try {
-      const res = await fetch('/api/register.php', {
+      const res = await fetch('/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(authForm)
@@ -119,7 +119,7 @@ const App = () => {
     setLoading(true);
     setError('');
     try {
-      const res = await fetch('/api/reservations.php', {
+      const res = await fetch('/api/reservations', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...reservationForm, userId: user.id })
@@ -140,7 +140,7 @@ const App = () => {
 
   const updateReservationStatus = async (id: number, status: string) => {
     try {
-      const res = await fetch(`/api/updateReservation.php?id=${id}`, {
+      const res = await fetch(`/api/updateReservation?id=${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status })
