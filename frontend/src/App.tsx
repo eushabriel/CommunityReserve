@@ -53,14 +53,14 @@ const App = () => {
   };
 
   const fetchFacilities = async () => {
-    const res = await fetch('/api/facilities');
+    const res = await fetch('/api/facilities.php');
     const data = await res.json();
     setFacilities(data);
   };
 
   const fetchReservations = async () => {
     if (!user) return;
-    const res = await fetch(`/api/reservations?userId=${user.id}&role=${user.role}`);
+    const res = await fetch(`/api/reservations.php?userId=${user.id}&role=${user.role}`);
     const data = await res.json();
     setReservations(data);
   };
@@ -70,7 +70,7 @@ const App = () => {
     setLoading(true);
     setError('');
     try {
-      const res = await fetch('/api/login', {
+      const res = await fetch('/api/login.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: authForm.email, password: authForm.password })
@@ -94,7 +94,7 @@ const App = () => {
     setLoading(true);
     setError('');
     try {
-      const res = await fetch('/api/register', {
+      const res = await fetch('/api/register.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(authForm)
@@ -119,7 +119,7 @@ const App = () => {
     setLoading(true);
     setError('');
     try {
-      const res = await fetch('/api/reservations', {
+      const res = await fetch('/api/reservations.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...reservationForm, userId: user.id })
@@ -139,12 +139,23 @@ const App = () => {
   };
 
   const updateReservationStatus = async (id: number, status: string) => {
-    await fetch(`/api/reservations/${id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status })
-    });
-    fetchReservations();
+    try {
+      const res = await fetch(`/api/updateReservation.php?id=${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        setError(data.error || 'Failed to update reservation.');
+        return;
+      }
+
+      fetchReservations();
+    } catch (err) {
+      setError('Connection error');
+    }
   };
 
   const logout = () => {
