@@ -29,6 +29,8 @@ const App = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
+
+  const [isValidEmail, setValidEmail] = useState(false);
   const [isValidPassword, setValidPassword] = useState(false);
 
   // Form states
@@ -41,20 +43,33 @@ const App = () => {
   });
 
   useEffect(() => {
-    persistentSession();
-  }, [user]);
-
-  useEffect(() => {
     fetchFacilities();
   }, []);
 
   useEffect(() => {
     if (user) {
+      setView(user.role === 'admin' ? 'admin' : 'dashboard');
       fetchReservations();
+    } else {
+      setView('landing');
     }
   }, [user]);
 
   useEffect(() => {
+    validateEmail();
+  }, [authForm.email]);
+
+  useEffect(() => {
+    validatePassword();
+  }, [authForm.password]);
+
+  const validateEmail = () => {
+    const email = authForm.email.trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    setValidEmail(emailRegex.test(email));
+  }
+
+  const validatePassword = () => {
     const password = authForm.password;
 
     const hasUppercase = /[A-Z]/.test(password);
@@ -66,18 +81,10 @@ const App = () => {
       hasUppercase && 
       hasNumber && 
       hasSymbol;
-      
+
     setValidPassword(isValid);
-  }, [authForm.password]);
-
-
-  const persistentSession = () => {
-    if (user) {
-      setView(user.role === 'admin' ? 'admin' : 'dashboard');
-    } else {
-      setView('landing');
-    }
   }
+
   const handleShare = () => {
     navigator.clipboard.writeText(window.location.href);
     setCopied(true);
@@ -124,9 +131,17 @@ const App = () => {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isValidPassword){
+
+    if (!isValidEmail) {
+      setError('Please enter a valid email address.');
       return;
     }
+
+    if (!isValidPassword) {
+      setError('Password does not meet the requirements.');
+      return;
+    }
+
     setLoading(true);
     setError('');
     try {
@@ -303,6 +318,7 @@ const App = () => {
               loading={loading}
               error={error}
               switchToLogin={() => setView('login')}
+              isValidEmail={isValidEmail}
               isValidPassword={isValidPassword}
             />
           )}

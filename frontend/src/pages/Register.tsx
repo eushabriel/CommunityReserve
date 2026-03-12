@@ -9,6 +9,7 @@ interface RegisterProps {
   loading: boolean;
   error: string;
   switchToLogin: () => void;
+  isValidEmail: boolean;
   isValidPassword: boolean;
 }
 
@@ -19,6 +20,7 @@ const Register: React.FC<RegisterProps> = ({
   loading,
   error,
   switchToLogin,
+  isValidEmail,
   isValidPassword
 }) => {
   return (
@@ -61,6 +63,9 @@ const Register: React.FC<RegisterProps> = ({
             value={authForm.email}
             onChange={e => setAuthForm({ ...authForm, email: e.target.value })}
           />
+          {(!isValidEmail && authForm.email) && <p className="text-xs text-red-400 font-medium">
+            Please enter a valid email address
+          </p>}
         </div>
 
         <div className="space-y-2">
