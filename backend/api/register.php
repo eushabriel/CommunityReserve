@@ -14,6 +14,16 @@ $email = trim($data['email'] ?? '');
 $password = trim($data['password'] ?? '');
 $name = trim($data['name'] ?? '');
 
+if (
+    strlen($password) < 8 ||
+    !preg_match('/[0-9]/', $password) ||
+    !preg_match('/[^A-Za-z0-9]/', $password)
+) {
+    jsonResponse([
+        'error' => 'Password must be at least 8 characters and include a number and symbol.'
+    ], 400);
+}
+
 if ($email === '' || $password === '' || $name === '') {
     jsonResponse(['error' => 'Missing required fields'], 400);
 }
@@ -31,7 +41,7 @@ try {
 
     $stmt->execute([
         ':email' => $email,
-        ':password' => $password,
+        ':password' => password_hash($password, PASSWORD_DEFAULT),
         ':name' => $name,
         ':role' => $role
     ]);

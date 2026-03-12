@@ -18,21 +18,20 @@ if ($email === '' || $password === '') {
 }
 
 $stmt = $pdo->prepare("
-    SELECT id, email, name, role
+    SELECT id, email, name, role, password
     FROM users
-    WHERE email = :email AND password = :password
+    WHERE email = :email
 ");
 
-$stmt->execute([
-    ':email' => $email,
-    ':password' => $password
-]);
+$stmt->execute([':email' => $email]);
 
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-if (!$user) {
+if (!$user || !password_verify($password, $user['password'])) {
     jsonResponse(['error' => 'Invalid credentials'], 401);
 }
+
+unset($user['password']);
 
 jsonResponse($user);
 ?>

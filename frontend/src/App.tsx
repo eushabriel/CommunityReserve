@@ -29,6 +29,7 @@ const App = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
+  const [isValidPassword, setValidPassword] = useState(false);
 
   // Form states
   const [authForm, setAuthForm] = useState({ email: '', password: '', name: '' });
@@ -52,6 +53,23 @@ const App = () => {
       fetchReservations();
     }
   }, [user]);
+
+  useEffect(() => {
+    const password = authForm.password;
+
+    const hasUppercase = /[A-Z]/.test(password);
+    const hasNumber = /\d/.test(password);
+    const hasSymbol = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+    const isValid = 
+      password.length >= 8 && 
+      hasUppercase && 
+      hasNumber && 
+      hasSymbol;
+      
+    setValidPassword(isValid);
+  }, [authForm.password]);
+
 
   const persistentSession = () => {
     if (user) {
@@ -106,6 +124,9 @@ const App = () => {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isValidPassword){
+      return;
+    }
     setLoading(true);
     setError('');
     try {
@@ -282,6 +303,7 @@ const App = () => {
               loading={loading}
               error={error}
               switchToLogin={() => setView('login')}
+              isValidPassword={isValidPassword}
             />
           )}
 

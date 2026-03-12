@@ -9,6 +9,7 @@ interface RegisterProps {
   loading: boolean;
   error: string;
   switchToLogin: () => void;
+  isValidPassword: boolean;
 }
 
 const Register: React.FC<RegisterProps> = ({
@@ -18,6 +19,7 @@ const Register: React.FC<RegisterProps> = ({
   loading,
   error,
   switchToLogin,
+  isValidPassword
 }) => {
   return (
     <motion.div
@@ -73,6 +75,9 @@ const Register: React.FC<RegisterProps> = ({
             value={authForm.password}
             onChange={e => setAuthForm({ ...authForm, password: e.target.value })}
           />
+          <p className={`text-xs ${isValidPassword || !authForm.password ? 'text-black/40' : 'text-red-400'} font-medium`}>
+            Use at least 8 characters including one uppercase letter, number, and symbol
+          </p>
         </div>
 
         {error && (
@@ -82,8 +87,8 @@ const Register: React.FC<RegisterProps> = ({
         )}
 
         <button
-          disabled={loading}
-          className="w-full py-4 bg-black text-white rounded-2xl font-bold hover:bg-black/80 transition-all disabled:opacity-50 shadow-xl shadow-black/10"
+          disabled={loading || !isValidPassword}
+          className="w-full py-4 bg-black text-white rounded-2xl font-bold hover:bg-black/80 transition-all disabled:opacity-50 shadow-xl shadow-black/10 cursor-pointer"
         >
           {loading ? 'Processing...' : 'Create Account'}
         </button>
@@ -92,7 +97,7 @@ const Register: React.FC<RegisterProps> = ({
       <div className="mt-8 text-center">
         <button
           onClick={switchToLogin}
-          className="text-sm font-medium text-black/60 hover:text-black transition-colors"
+          className="text-sm font-medium text-black/60 hover:text-black transition-colors cursor-pointer"
         >
           Already have an account? Sign in
         </button>
