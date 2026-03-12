@@ -19,7 +19,10 @@ import Dashboard from './pages/Dashboard';
 import Admin from './pages/Admin';
 
 const App = () => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(() => {
+    const savedUser = localStorage.getItem('user');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
   const [view, setView] = useState<'landing' | 'login' | 'register' | 'dashboard' | 'admin'>('landing');
   const [facilities, setFacilities] = useState<Facility[]>([]);
   const [reservations, setReservations] = useState<Reservation[]>([]);
@@ -37,6 +40,10 @@ const App = () => {
   });
 
   useEffect(() => {
+    persistentSession();
+  }, [user]);
+
+  useEffect(() => {
     fetchFacilities();
   }, []);
 
@@ -46,6 +53,13 @@ const App = () => {
     }
   }, [user]);
 
+  const persistentSession = () => {
+    if (user) {
+      setView(user.role === 'admin' ? 'admin' : 'dashboard');
+    } else {
+      setView('landing');
+    }
+  }
   const handleShare = () => {
     navigator.clipboard.writeText(window.location.href);
     setCopied(true);
@@ -78,6 +92,7 @@ const App = () => {
       if (res.ok) {
         const data = await res.json();
         setUser(data);
+        localStorage.setItem('user', JSON.stringify(data));
         setView(data.role === 'admin' ? 'admin' : 'dashboard');
       } else {
         setError('Invalid credentials');
@@ -102,6 +117,7 @@ const App = () => {
       if (res.ok) {
         const data = await res.json();
         setUser(data);
+        localStorage.setItem('user', JSON.stringify(data));
         setView('dashboard');
       } else {
         setError('Email already exists');
@@ -159,6 +175,7 @@ const App = () => {
   };
 
   const logout = () => {
+    localStorage.removeItem('user');
     setUser(null);
     setView('landing');
   };
