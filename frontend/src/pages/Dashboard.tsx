@@ -156,6 +156,45 @@ const Dashboard: React.FC<DashboardProps> = ({
                 </option>
               ))}
             </select>
+            
+
+            <div className="relative">
+              <input
+                type="datetime-local"
+                required
+                value={reservationForm.startTime}
+                onChange={(e) =>
+                  setReservationForm({ ...reservationForm, startTime: e.target.value })
+                }
+                className="peer w-full px-5 py-4 bg-black/5 rounded-2xl"
+              />
+              <label className="absolute left-5 -top-2 px-1 text-xs text-black/60 pointer-events-none peer-focus:hidden">
+                Start Time
+              </label>
+            </div>
+
+            <div className="relative">
+              <input
+                type="datetime-local"
+                required
+                value={reservationForm.startTime}
+                onChange={(e) =>
+                  setReservationForm({ ...reservationForm, endTime: e.target.value })
+                }
+                className="peer w-full px-5 py-4 bg-black/5 rounded-2xl"
+              />
+              <label className="absolute left-5 -top-2 px-1 text-xs text-black/60 pointer-events-none peer-focus:hidden">
+                End Time
+              </label>
+            </div>
+
+            <textarea
+              required
+              placeholder="Purpose of reservation"
+              value={reservationForm.purpose}
+              onChange={(e) => setReservationForm({ ...reservationForm, purpose: e.target.value })}
+              className="w-full px-5 py-4 bg-black/5 rounded-2xl"
+            />
 
             {error && (
               <div className="p-4 bg-rose-50 text-rose-600 rounded-2xl flex items-center gap-2">

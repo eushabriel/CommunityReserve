@@ -10,6 +10,14 @@
     "preview": "npm --prefix frontend run preview"
   },
   "devDependencies": {
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
     "concurrently": "^8.2.2"
+  },
+  "dependencies": {
+    "lucide-react": "^0.577.0",
+    "motion": "^12.36.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
   }
 }
