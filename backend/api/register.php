@@ -43,10 +43,10 @@ try {
         'role' => $role
     ], 201);
 } catch (PDOException $e) {
-    if ($e->getCode() === '23000') { // unique constraint violation
-        jsonResponse(['error' => 'Email already exists'], 400);
-    }
-
-    jsonResponse(['error' => 'Registration failed'], 500);
+    jsonResponse([
+        'error' => 'Registration failed',
+        'code' => $e->getCode(),
+        'details' => $e->getMessage()
+    ], 500);
 }
 ?>
