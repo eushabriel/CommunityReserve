@@ -9,9 +9,7 @@
 > i'm including the db para lang 'di paulit-ulit creation ng test accounts. DB will be deleted (reset) 'pag ipapasa na.
 
 Format: [email] [password]
-- `admin@admin.its admin`
-- `polgabriel09@gmail.com admin`
-- `test@test.its test`
+- `admin@admin.its` `Admin123.`
 
 # NOTES 
 > [!NOTE]
@@ -33,7 +31,7 @@ Format: [email] [password]
 - filter based on space, date range (from _ to _) // optional
 
 ### GENERAL:
-- no persistent session (when refreshing, goes back to LANDING) // high
-- password complexity // high
-- email verif // high
-- refresh inputs in LANDING page // mid
+- ~~no persistent session (when refreshing, goes back to LANDING) // high~~
+- ~~password complexity // high~~
+- email verif // optional (maarte pala hosting service zzz)
+- refresh inputs in LANDING page // optional (can be a feature instead :P)
