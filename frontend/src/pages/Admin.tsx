@@ -4,7 +4,9 @@ import {
   Clock3,
   Calendar,
   CheckCircle,
-  XCircle
+  XCircle,
+  Edit2,
+  Trash2
 } from "lucide-react";
 
 import { Reservation, User } from "../types";
@@ -13,6 +15,8 @@ interface AdminProps {
   user: User;
   reservations: Reservation[];
   updateReservationStatus: (id: number, status: string) => void;
+  deleteReservation: (id: number) => void;
+  editReservation: (id: number) => void;
   getStatusColor: (status: string) => string;
   getStatusIcon: (status: string) => React.ReactNode;
 }
@@ -21,6 +25,8 @@ const Admin: React.FC<AdminProps> = ({
   user,
   reservations,
   updateReservationStatus,
+  deleteReservation,
+  editReservation,
   getStatusColor,
   getStatusIcon
 }) => {
@@ -59,7 +65,7 @@ const Admin: React.FC<AdminProps> = ({
                 <th className="px-8 py-6">Schedule</th>
                 <th className="px-8 py-6">Purpose</th>
                 <th className="px-8 py-6">Status</th>
-                <th className="px-8 py-6 text-right">Actions</th>
+                <th className="px-8 py-6 text-center">Actions</th>
               </tr>
             </thead>
 
@@ -137,8 +143,42 @@ const Admin: React.FC<AdminProps> = ({
                         >
                           <XCircle className="w-5 h-5" />
                         </button>
+
+                        <button
+                          onClick={() =>
+                            editReservation(r.id)
+                          }
+                          className="p-2 bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white rounded-xl transition-all"
+                          title="Modify"
+                        >
+                          <Edit2 className="w-5 h-5" />
+                        </button>
+
+                        <button
+                          onClick={() =>
+                            deleteReservation(r.id)
+                          }
+                          className="p-2 bg-gray-50 text-gray-600 hover:bg-gray-600 hover:text-white rounded-xl transition-all"
+                          title="Delete"
+                        >
+                          <Trash2 className="w-5 h-5" />
+                        </button>
                       </div>
                     )}
+                    {(r.status === "approved" || r.status === "rejected") && (
+                      <div className="flex justify-end gap-2">
+                        <button
+                          onClick={() =>
+                            deleteReservation(r.id)
+                          }
+                          className="p-2 bg-gray-50 text-gray-600 hover:bg-gray-600 hover:text-white rounded-xl transition-all"
+                          title="Delete"
+                        >
+                          <Trash2 className="w-5 h-5" />
+                        </button>
+                      </div>
+                    )}
+                    
                   </td>
                 </tr>
               ))}

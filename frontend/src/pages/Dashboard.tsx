@@ -6,7 +6,9 @@ import {
   CalendarDays,
   Building2,
   Plus,
-  XCircle
+  XCircle,
+  Trash2,
+  Edit2
 } from "lucide-react";
 
 import { Facility, Reservation, User } from "../types";
@@ -30,6 +32,8 @@ interface DashboardProps {
     }>
   >;
   handleReservation: (e: React.FormEvent) => void;
+  deleteReservation: (id: number) => void;
+  editReservation: (id: number) => void;
   loading: boolean;
   error: string;
   getStatusColor: (status: string) => string;
@@ -43,6 +47,8 @@ const Dashboard: React.FC<DashboardProps> = ({
   reservationForm,
   setReservationForm,
   handleReservation,
+  deleteReservation,
+  editReservation,
   loading,
   error,
   getStatusColor,
@@ -81,47 +87,86 @@ const Dashboard: React.FC<DashboardProps> = ({
               <motion.div
                 layout
                 key={r.id}
-                className="bg-white p-6 rounded-3xl border border-black/5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6"
+                className="bg-white p-6 rounded-3xl border border-black/5 shadow-sm"
               >
-                <div className="flex items-center gap-6">
-                  <div className="w-16 h-16 bg-black/5 rounded-2xl flex items-center justify-center">
-                    <Building2 className="w-8 h-8 text-black/20" />
-                  </div>
-
-                  <div>
-                    <h3 className="text-xl font-bold">
-                      {r.facility_name}
-                    </h3>
-
-                    <div className="flex flex-wrap gap-4 mt-2 text-sm text-black/50 font-medium">
-                      <span className="flex items-center gap-1.5">
-                        <Calendar className="w-4 h-4" />
-                        {new Date(r.start_time).toLocaleDateString()}
-                      </span>
-
-                      <span className="flex items-center gap-1.5">
-                        <Clock className="w-4 h-4" />
-                        {new Date(r.start_time).toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit"
-                        })}
-                      </span>
+                <div className="grid grid-cols-[3fr_1fr_0.5fr] items-center gap-6">
+                  {/* 1 */}
+                  <div className="flex items-center gap-6">
+                    <div className="w-16 h-16 bg-black/5 rounded-2xl flex items-center justify-center">
+                      <Building2 className="w-8 h-8 text-black/20" />
                     </div>
 
-                    <p className="mt-2 text-sm italic text-black/40">
-                      "{r.purpose}"
-                    </p>
+                    <div>
+                      <h3 className="text-xl font-bold">
+                        {r.facility_name}
+                      </h3>
+
+                      <div className="flex flex-wrap gap-4 mt-2 text-sm text-black/50 font-medium">
+                        <span className="flex items-center gap-1.5">
+                          <Calendar className="w-4 h-4" />
+                          {new Date(r.start_time).toLocaleDateString()}
+                        </span>
+
+                        <span className="flex items-center gap-1.5">
+                          <Clock className="w-4 h-4" />
+                          {new Date(r.start_time).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit"
+                          })}
+                        </span>
+                      </div>
+
+                      <p className="mt-2 text-sm italic text-black/40">
+                        "{r.purpose}"
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {/* 2 */}
+                  <div
+                    className={`px-4 py-2 rounded-full text-xs font-bold border flex items-center gap-2 ${getStatusColor(
+                      r.status
+                    )}`}
+                  >
+                    {getStatusIcon(r.status)}
+                    {r.status.toUpperCase()}
+                  </div>
+                  
+                  {/* 3 */}
+                  <div className="flex justify-end gap-2">
+                    {r.status === "pending" && (
+                      <>
+                        <button
+                          onClick={() => editReservation(r.id)}
+                          className="p-2 bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white rounded-xl transition-all"
+                          title="Modify"
+                        >
+                          <Edit2 className="w-4 h-4" />
+                        </button>
+
+                        <button
+                          onClick={() => deleteReservation(r.id)}
+                          className="p-2 bg-gray-50 text-gray-600 hover:bg-gray-600 hover:text-white rounded-xl transition-all"
+                          title="Delete"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </>
+                    )}
+                    {(r.status === "approved" || r.status === "rejected") && (
+                      <>
+                        <button
+                          onClick={() => deleteReservation(r.id)}
+                          className="p-2 bg-gray-50 text-gray-600 hover:bg-gray-600 hover:text-white rounded-xl transition-all"
+                          title="Delete"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </>
+                    )}
                   </div>
                 </div>
-
-                <div
-                  className={`px-4 py-2 rounded-full text-xs font-bold border flex items-center gap-2 ${getStatusColor(
-                    r.status
-                  )}`}
-                >
-                  {getStatusIcon(r.status)}
-                  {r.status.toUpperCase()}
-                </div>
+                
               </motion.div>
             ))
           )}

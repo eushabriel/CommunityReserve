@@ -17,13 +17,15 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Admin from './pages/Admin';
+import EditReservation from './pages/EditReservation';
 
 const App = () => {
   const [user, setUser] = useState<User | null>(() => {
     const savedUser = localStorage.getItem('user');
     return savedUser ? JSON.parse(savedUser) : null;
   });
-  const [view, setView] = useState<'landing' | 'login' | 'register' | 'dashboard' | 'admin'>('landing');
+  const [view, setView] = useState<'landing' | 'login' | 'register' | 'dashboard' | 'admin' | 'edit'>('landing');
+  const [editingReservation, setEditingReservation] = useState<Reservation | null>(null);
   const [facilities, setFacilities] = useState<Facility[]>([]);
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(false);
@@ -210,6 +212,63 @@ const App = () => {
     }
   };
 
+  const deleteReservation = async (id: number) => {
+    try {
+      const res = await fetch(`/api/reservations?id=${id}`, {
+        method: 'DELETE',
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        setError(data.error || 'Failed to delete reservation.');
+        return;
+      }
+
+      fetchReservations();
+    } catch (err) {
+      setError('Connection error');
+    }
+  };
+
+  const editReservation = async (id: number) => {
+    try {
+      const res = await fetch(`/api/reservations?id=${id}`);
+      if (!res.ok) {
+        const data = await res.json();
+        setError(data.error || 'Failed to fetch reservation.');
+        return;
+      }
+
+      const reservation: Reservation = await res.json();
+      setEditingReservation(reservation);
+      setView('edit');
+    } catch (err) {
+      setError('Connection error');
+    }
+  };
+
+  const updateReservation = async (id: number, updatedData: Partial<Reservation>) => {
+    try {
+      const res = await fetch(`/api/updateReservation?id=${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedData),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        setError(data.error || 'Failed to update reservation.');
+        return;
+      }
+
+      await fetchReservations();       
+      setEditingReservation(null);
+      setView(user?.role === 'admin' ? 'admin' : 'dashboard');
+    } catch (err) {
+      setError('Connection error');
+    }
+  };
+
   const logout = () => {
     localStorage.removeItem('user');
     setUser(null);
@@ -332,6 +391,8 @@ const App = () => {
             reservationForm={reservationForm}
             setReservationForm={setReservationForm}
             handleReservation={handleReservation}
+            deleteReservation={deleteReservation}
+            editReservation={editReservation}
             loading={loading}
             error={error}
             getStatusColor={getStatusColor}
@@ -345,10 +406,28 @@ const App = () => {
             user={user}
             reservations={reservations}
             updateReservationStatus={updateReservationStatus}
+            deleteReservation={deleteReservation}
+            editReservation={editReservation}
             getStatusColor={getStatusColor}
             getStatusIcon={getStatusIcon}
           />
         )}
+
+        {view === 'edit' && editingReservation && (
+        <EditReservation
+          key="edit"
+          reservation={editingReservation}
+          setReservation={setEditingReservation}
+          facilities={facilities}
+          updateReservation={updateReservation}
+          loading={loading}
+          error={error}
+          cancelEdit={() => {
+            setEditingReservation(null);
+            setView(user?.role === 'admin' ? 'admin' : 'dashboard');
+          }}
+        />
+      )}
         </AnimatePresence>
       </main>
 
