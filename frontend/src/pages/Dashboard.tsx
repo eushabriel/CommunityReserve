@@ -19,6 +19,7 @@ interface DashboardProps {
   facilities: Facility[];
   reservationForm: {
     facilityId: number;
+    date: string;
     startTime: string;
     endTime: string;
     purpose: string;
@@ -26,6 +27,7 @@ interface DashboardProps {
   setReservationForm: React.Dispatch<
     React.SetStateAction<{
       facilityId: number;
+      date: string;
       startTime: string;
       endTime: string;
       purpose: string;
@@ -101,20 +103,33 @@ const Dashboard: React.FC<DashboardProps> = ({
                         {r.facility_name}
                       </h3>
 
-                      <div className="flex flex-wrap gap-4 mt-2 text-sm text-black/50 font-medium">
-                        <span className="flex items-center gap-1.5">
-                          <Calendar className="w-4 h-4" />
-                          {new Date(r.start_time).toLocaleDateString()}
-                        </span>
+                      <div className="flex flex-wrap">
+                        <div className="flex flex-wrap gap-4 mt-2 text-sm text-black/50 font-medium">
+                          <span className="flex items-center gap-1.5">
+                            <Calendar className="w-4 h-4" />
+                            {new Date(r.start_time).toLocaleDateString()}
+                          </span>
 
-                        <span className="flex items-center gap-1.5">
-                          <Clock className="w-4 h-4" />
-                          {new Date(r.start_time).toLocaleTimeString([], {
-                            hour: "2-digit",
-                            minute: "2-digit"
-                          })}
-                        </span>
+                          <span className="flex items-center gap-1.5">
+                            <Clock className="w-4 h-4" />
+                            {new Date(r.start_time).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit"
+                            })}
+                          </span>
+
+                          <span className="self-center text-sm text-black/50 font-medium">to</span>
+
+                          <span className="flex items-center gap-1.5">
+                            <Clock className="w-4 h-4" />
+                            {new Date(r.end_time).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit"
+                            })}
+                          </span>
+                        </div>
                       </div>
+                      
 
                       <p className="mt-2 text-sm italic text-black/40">
                         "{r.purpose}"
@@ -202,10 +217,9 @@ const Dashboard: React.FC<DashboardProps> = ({
               ))}
             </select>
             
-
             <div className="relative">
               <input
-                type="datetime-local"
+                type="date"
                 required
                 value={reservationForm.startTime}
                 onChange={(e) =>
@@ -214,24 +228,42 @@ const Dashboard: React.FC<DashboardProps> = ({
                 className="peer w-full px-5 py-4 bg-black/5 rounded-2xl"
               />
               <label className="absolute left-5 -top-2 px-1 text-xs text-black/60 pointer-events-none peer-focus:hidden">
-                Start Time
+                Date
               </label>
             </div>
 
-            <div className="relative">
-              <input
-                type="datetime-local"
-                required
-                value={reservationForm.startTime}
-                onChange={(e) =>
-                  setReservationForm({ ...reservationForm, endTime: e.target.value })
-                }
-                className="peer w-full px-5 py-4 bg-black/5 rounded-2xl"
-              />
-              <label className="absolute left-5 -top-2 px-1 text-xs text-black/60 pointer-events-none peer-focus:hidden">
-                End Time
-              </label>
+            <div className="flex gap-4">
+              <div className="relative">
+                <input
+                  type="time"
+                  required
+                  value={reservationForm.startTime}
+                  onChange={(e) =>
+                    setReservationForm({ ...reservationForm, startTime: e.target.value })
+                  }
+                  className="peer w-full px-5 py-4 bg-black/5 rounded-2xl"
+                />
+                <label className="absolute left-5 -top-2 px-1 text-xs text-black/60 pointer-events-none peer-focus:hidden">
+                  Start Time
+                </label>
+              </div>
+
+              <div className="relative">
+                <input
+                  type="time"
+                  required
+                  value={reservationForm.endTime}
+                  onChange={(e) =>
+                    setReservationForm({ ...reservationForm, endTime: e.target.value })
+                  }
+                  className="peer w-full px-5 py-4 bg-black/5 rounded-2xl"
+                />
+                <label className="absolute left-5 -top-2 px-1 text-xs text-black/60 pointer-events-none peer-focus:hidden">
+                  End Time
+                </label>
+              </div>
             </div>
+            
 
             <textarea
               required
