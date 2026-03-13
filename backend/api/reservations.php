@@ -58,66 +58,52 @@ if ($method === 'POST') {
     $facilityId = $data['facilityId'] ?? null;
 
     // --- TEMP ---
-    // $startTime = $data['startTime'] ?? '';
-    // $endTime = $data['endTime'] ?? '';
-    // $purpose = trim($data['purpose'] ?? '');
+    $date = $data['date'] ?? '';
+    $startTimeOnly = trim($data['startTime'] ?? '');
+    $endTimeOnly = trim($data['endTime'] ?? '');
+    $purpose = trim($data['purpose'] ?? '');
 
-    /**
-     * ----------------------------------------------------------
-     * TEMP:
-     * change to the following conditions after frontend has been fixed:
-     * (!$userId || !$facilityId || $startTime === '' || $endTime === '')
-     * ----------------------------------------------------------
-     */
-    if (!$userId || !$facilityId) {
+    if (!$userId || !$facilityId || $date === '' || $startTimeOnly === '' || $endTimeOnly === '') {
         jsonResponse(['error' => 'Missing required fields'], 400);
+        exit;
     }
 
+    $startTime = $date . ' ' . $startTimeOnly . ':00';
+    $endTime = $date . ' ' . $endTimeOnly . ':00';
+
     // --- TEMP ---
-    // if (strtotime($endTime) <= strtotime($startTime)) {
-    //     jsonResponse(['error' => 'End time must be after start time'], 400);
-    // }
+    if (strtotime($endTime) <= strtotime($startTime)) {
+        jsonResponse(['error' => 'End time must be after start time'], 400);
+        exit;
+    }
 
     $conflictStmt = $pdo->prepare("
         SELECT *
         FROM reservations
         WHERE facility_id = :facility_id
-          AND status = 'approved'
-          
+            AND status IN ('pending', 'approved')
+            AND (
+                start_time < :end_time 
+                AND 
+                end_time > :start_time
+            )
         LIMIT 1
     ");
-
-    /**
-     * ----------------------------------------------------------
-     * TEMP:
-     * add the following to the query after frontend has been fixed:
-     * ----------------------------------------------------------
-     *  AND (
-            (start_time <= :start1 AND end_time > :start2)
-            OR
-            (start_time < :end1 AND end_time >= :end2)
-            OR
-            (:start3 <= start_time AND :end3 >= end_time)
-        )
-     */
 
     $conflictStmt->execute([
         ':facility_id' => $facilityId,
     // --- TEMP ---
-        // ':start1' => $startTime,
-        // ':start2' => $startTime,
-        // ':end1' => $endTime,
-        // ':end2' => $endTime,
-        // ':start3' => $startTime,
-        // ':end3' => $endTime
+        ':start_time' => $startTime,
+        ':end_time' => $endTime
     ]);
 
     $conflict = $conflictStmt->fetch(PDO::FETCH_ASSOC);
 
     // --- TEMP ---
-    // if ($conflict) {
-    //     jsonResponse(['error' => 'Facility is already booked for this time slot.'], 409);
-    // }
+    if ($conflict) {
+        jsonResponse(['error' => 'Facility is already booked for this time slot.'], 409);
+        exit;
+    }
 
     $insertStmt = $pdo->prepare("
         INSERT INTO reservations (user_id, facility_id, start_time, end_time, purpose)
@@ -128,13 +114,13 @@ if ($method === 'POST') {
         ':user_id' => $userId,
         ':facility_id' => $facilityId,
     // --- TEMP: PLACEHOLDER VALUES ---
-        ':start_time' => date('Y-m-d H:i:s'),
-        ':end_time' => date('Y-m-d H:i:s'),
-        ':purpose' => ''
+        // ':start_time' => date('Y-m-d H:i:s'),
+        // ':end_time' => date('Y-m-d H:i:s'),
+        // ':purpose' => ''
     // --- TEMP ---
-        // ':start_time' => $startTime,
-        // ':end_time' => $endTime,
-        // ':purpose' => $purpose
+        ':start_time' => $startTime,
+        ':end_time' => $endTime,
+        ':purpose' => $purpose
     ]);
 
     jsonResponse(['id' => (int) $pdo->lastInsertId()], 201);

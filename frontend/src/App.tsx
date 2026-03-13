@@ -174,6 +174,7 @@ const App = () => {
     setLoading(true);
     setError('');
     try {
+      console.log({ ...reservationForm, userId: user.id });
       const res = await fetch('/api/reservations', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
