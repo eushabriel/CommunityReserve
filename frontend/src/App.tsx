@@ -39,6 +39,7 @@ const App = () => {
   const [authForm, setAuthForm] = useState({ email: '', password: '', name: '' });
   const [reservationForm, setReservationForm] = useState({ 
     facilityId: 0, 
+    date: '',
     startTime: '', 
     endTime: '', 
     purpose: '' 
@@ -180,7 +181,7 @@ const App = () => {
       });
       if (res.ok) {
         fetchReservations();
-        setReservationForm({ facilityId: 0, startTime: '', endTime: '', purpose: '' });
+        setReservationForm({ facilityId: 0, date: '', startTime: '', endTime: '', purpose: '' });
       } else {
         const data = await res.json();
         setError(data.error || 'Failed to book');

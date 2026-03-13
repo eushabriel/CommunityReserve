@@ -71,37 +71,75 @@ const EditReservation: React.FC<EditReservationProps> = ({
                 ))}
             </select>
             </div>
-
+            
             <div className="space-y-2">
-            <label className="text-xs font-bold uppercase tracking-wider text-black/40 ml-1">
-                Start Time
-            </label>
-            <input
-                type="datetime-local"
-                required
-                className="w-full px-5 py-4 bg-black/5 rounded-2xl focus:ring-2 focus:ring-black"
-                value={reservation.start_time}
-                onChange={e =>
-                setReservation(prev => prev ? { ...prev, start_time: e.target.value } : prev)
-                }
-            />
+              <label className="text-xs font-bold uppercase tracking-wider text-black/40 ml-1">
+                  Date
+              </label>
+              <input
+                  type="date"
+                  required
+                  className="w-full px-5 py-4 bg-black/5 rounded-2xl focus:ring-2 focus:ring-black"
+                  value={reservation.start_time.slice(0, 10)}
+                  onChange={e =>
+                    setReservation(prev =>
+                      prev
+                        ? {
+                            ...prev,
+                            start_time: `${e.target.value}T${prev.start_time.slice(11)}`,
+                            end_time: `${e.target.value}T${prev.end_time.slice(11)}`
+                          }
+                        : prev
+                    )
+                  }
+              />
             </div>
 
-            <div className="space-y-2">
-            <label className="text-xs font-bold uppercase tracking-wider text-black/40 ml-1">
-                End Time
-            </label>
-            <input
-                type="datetime-local"
-                required
-                className="w-full px-5 py-4 bg-black/5 rounded-2xl focus:ring-2 focus:ring-black"
-                value={reservation.end_time}
-                onChange={e =>
-                setReservation(prev => prev ? { ...prev, end_time: e.target.value } : prev)
-                }
-            />
-            </div>
+            <div className="flex gap-4">
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-wider text-black/40 ml-1">
+                    Start Time
+                </label>
+                <input
+                    type="time"
+                    required
+                    className="w-full px-5 py-4 bg-black/5 rounded-2xl focus:ring-2 focus:ring-black"
+                    value={reservation.start_time.slice(11, 16)}
+                    onChange={e =>
+                      setReservation(prev =>
+                        prev
+                          ? {
+                              ...prev,
+                              start_time: `${prev.start_time.slice(0, 10)}T${e.target.value}`
+                            }
+                          : prev
+                      )
+                    }
+                />
+              </div>
 
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-wider text-black/40 ml-1">
+                    End Time
+                </label>
+                <input
+                    type="time"
+                    required
+                    className="w-full px-5 py-4 bg-black/5 rounded-2xl focus:ring-2 focus:ring-black"
+                    value={reservation.end_time.slice(11, 16)}
+                    onChange={e =>
+                      setReservation(prev =>
+                        prev
+                          ? {
+                              ...prev,
+                              end_time: `${prev.end_time.slice(0, 10)}T${e.target.value}`
+                            }
+                          : prev
+                      )
+                    }
+                />
+              </div>
+            </div>
         </div>
 
         {/* 2 */}
