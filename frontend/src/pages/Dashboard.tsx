@@ -20,16 +20,16 @@ interface DashboardProps {
   reservationForm: {
     facilityId: number;
     date: string;
-    startTime: string;
-    endTime: string;
+    start_time: string;
+    end_time: string;
     purpose: string;
   };
   setReservationForm: React.Dispatch<
     React.SetStateAction<{
       facilityId: number;
       date: string;
-      startTime: string;
-      endTime: string;
+      start_time: string;
+      end_time: string;
       purpose: string;
     }>
   >;
@@ -237,9 +237,9 @@ const Dashboard: React.FC<DashboardProps> = ({
                 <input
                   type="time"
                   required
-                  value={reservationForm.startTime}
+                  value={reservationForm.start_time}
                   onChange={(e) =>
-                    setReservationForm({ ...reservationForm, startTime: e.target.value })
+                    setReservationForm({ ...reservationForm, start_time: e.target.value })
                   }
                   className="peer w-full px-5 py-4 bg-black/5 rounded-2xl"
                 />
@@ -252,9 +252,9 @@ const Dashboard: React.FC<DashboardProps> = ({
                 <input
                   type="time"
                   required
-                  value={reservationForm.endTime}
+                  value={reservationForm.end_time}
                   onChange={(e) =>
-                    setReservationForm({ ...reservationForm, endTime: e.target.value })
+                    setReservationForm({ ...reservationForm, end_time: e.target.value })
                   }
                   className="peer w-full px-5 py-4 bg-black/5 rounded-2xl"
                 />

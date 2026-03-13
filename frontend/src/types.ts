@@ -17,8 +17,11 @@ export interface Reservation {
   id: number;
   user_id: number;
   facility_id: number;
+
+  date: string;
   start_time: string;
   end_time: string;
+
   status: 'pending' | 'approved' | 'rejected';
   purpose: string;
   created_at: string;

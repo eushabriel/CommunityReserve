@@ -27,6 +27,7 @@ const EditReservation: React.FC<EditReservationProps> = ({
     e.preventDefault();
     await updateReservation(reservation.id, {
       facility_id: reservation.facility_id,
+      date: reservation.date,
       start_time: reservation.start_time,
       end_time: reservation.end_time,
       purpose: reservation.purpose,
@@ -80,17 +81,9 @@ const EditReservation: React.FC<EditReservationProps> = ({
                   type="date"
                   required
                   className="w-full px-5 py-4 bg-black/5 rounded-2xl focus:ring-2 focus:ring-black"
-                  value={reservation.start_time.slice(0, 10)}
+                  value={reservation.date || ''}
                   onChange={e =>
-                    setReservation(prev =>
-                      prev
-                        ? {
-                            ...prev,
-                            start_time: `${e.target.value}T${prev.start_time.slice(11)}`,
-                            end_time: `${e.target.value}T${prev.end_time.slice(11)}`
-                          }
-                        : prev
-                    )
+                    setReservation(prev => prev ? { ...prev, date: e.target.value } : prev)
                   }
               />
             </div>
@@ -104,16 +97,9 @@ const EditReservation: React.FC<EditReservationProps> = ({
                     type="time"
                     required
                     className="w-full px-5 py-4 bg-black/5 rounded-2xl focus:ring-2 focus:ring-black"
-                    value={reservation.start_time.slice(11, 16)}
+                    value={reservation.start_time || ''}
                     onChange={e =>
-                      setReservation(prev =>
-                        prev
-                          ? {
-                              ...prev,
-                              start_time: `${prev.start_time.slice(0, 10)}T${e.target.value}`
-                            }
-                          : prev
-                      )
+                      setReservation(prev => prev ? { ...prev, start_time: e.target.value } : prev)
                     }
                 />
               </div>
@@ -126,16 +112,9 @@ const EditReservation: React.FC<EditReservationProps> = ({
                     type="time"
                     required
                     className="w-full px-5 py-4 bg-black/5 rounded-2xl focus:ring-2 focus:ring-black"
-                    value={reservation.end_time.slice(11, 16)}
+                    value={reservation.end_time || ''}
                     onChange={e =>
-                      setReservation(prev =>
-                        prev
-                          ? {
-                              ...prev,
-                              end_time: `${prev.end_time.slice(0, 10)}T${e.target.value}`
-                            }
-                          : prev
-                      )
+                      setReservation(prev => prev ? { ...prev, end_time: e.target.value } : prev)
                     }
                 />
               </div>

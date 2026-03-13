@@ -40,8 +40,8 @@ const App = () => {
   const [reservationForm, setReservationForm] = useState({ 
     facilityId: 0, 
     date: '',
-    startTime: '', 
-    endTime: '', 
+    start_time: '', 
+    end_time: '', 
     purpose: '' 
   });
 
@@ -174,15 +174,22 @@ const App = () => {
     setLoading(true);
     setError('');
     try {
-      console.log({ ...reservationForm, userId: user.id });
+      const payload = {
+        userId: user.id,
+        facilityId: reservationForm.facilityId,
+        date: reservationForm.date,
+        start_time: reservationForm.start_time,
+        end_time: reservationForm.end_time,
+        purpose: reservationForm.purpose
+      };
       const res = await fetch('/api/reservations', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...reservationForm, userId: user.id })
+        body: JSON.stringify(payload)
       });
       if (res.ok) {
         fetchReservations();
-        setReservationForm({ facilityId: 0, date: '', startTime: '', endTime: '', purpose: '' });
+        setReservationForm({ facilityId: 0, date: '', start_time: '', end_time: '', purpose: '' });
       } else {
         const data = await res.json();
         setError(data.error || 'Failed to book');
@@ -241,9 +248,18 @@ const App = () => {
         return;
       }
 
-      const reservation: Reservation = await res.json();
+      const r = await res.json();
+
+      const reservation: Reservation = {
+        ...r,
+        date: r.start_time.slice(0, 10),
+        start_time: r.start_time.slice(11, 16),
+        end_time: r.end_time.slice(11, 16)
+      };
+
       setEditingReservation(reservation);
       setView('edit');
+
     } catch (err) {
       setError('Connection error');
     }
@@ -251,7 +267,11 @@ const App = () => {
 
   const updateReservation = async (id: number, updatedData: Partial<Reservation>) => {
     try {
-      const res = await fetch(`/api/updateReservation?id=${id}`, {
+      // console.log(updatedData);
+      // return;
+      // debug //
+
+      const res = await fetch(`/api/reservations?id=${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedData),
@@ -263,11 +283,13 @@ const App = () => {
         return;
       }
 
-      await fetchReservations();       
+      await fetchReservations();
+      
       setEditingReservation(null);
       setView(user?.role === 'admin' ? 'admin' : 'dashboard');
     } catch (err) {
       setError('Connection error');
+      console.error(err);
     }
   };
 
