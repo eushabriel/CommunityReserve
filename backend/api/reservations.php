@@ -140,5 +140,18 @@ if ($method === 'POST') {
     jsonResponse(['id' => (int) $pdo->lastInsertId()], 201);
 }
 
+if ($method === 'DELETE') {
+    // remove from database based on id
+    $id = (int) ($_GET['id'] ?? 0);
+    
+    $stmt = $pdo->prepare("
+        DELETE FROM reservations 
+        WHERE id = :id
+    ");
+    $stmt->execute([':id' => $id]);
+    
+    jsonResponse(['message' => 'Reservation deleted']);
+}
+
 jsonResponse(['error' => 'Method not allowed'], 405);
 ?>
