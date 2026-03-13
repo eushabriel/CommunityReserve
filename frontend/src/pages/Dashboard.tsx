@@ -221,9 +221,9 @@ const Dashboard: React.FC<DashboardProps> = ({
               <input
                 type="date"
                 required
-                value={reservationForm.startTime}
+                value={reservationForm.date}
                 onChange={(e) =>
-                  setReservationForm({ ...reservationForm, startTime: e.target.value })
+                  setReservationForm({ ...reservationForm, date: e.target.value })
                 }
                 className="peer w-full px-5 py-4 bg-black/5 rounded-2xl"
               />
