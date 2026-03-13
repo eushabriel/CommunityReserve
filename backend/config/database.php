@@ -39,6 +39,7 @@ try {
         );
     ");
 
+    // --- POPULATE FACILITIES --- //
     $countStatement = $pdo->query("SELECT COUNT(*) FROM facilities");
     $facilitiesCount = $countStatement->fetchColumn();
 
@@ -74,6 +75,34 @@ try {
             "Outdoor space for community gardening events.",
             100,
             "https://picsum.photos/seed/garden/800/600"
+        ]);
+    }
+
+    // --- POPULATE ADMIN USER --- //
+    $adminEmail = 'admin@admin.its';
+    $adminPassword = 'Admin123.';
+    $adminName = 'System Admin';
+
+    $checkAdmin = $pdo->prepare("SELECT COUNT(*) FROM users WHERE email = ?");
+    $checkAdmin->execute([$adminEmail]);
+    $adminExists = (int) $checkAdmin->fetchColumn();
+
+    if ($adminExists === 0) {
+        $insertAdmin = $pdo->prepare("
+            INSERT INTO users (
+                email,
+                password,
+                name,
+                role
+            )
+            VALUES (?, ?, ?, ?)
+        ");
+
+        $insertAdmin->execute([
+            $adminEmail,
+            password_hash($adminPassword, PASSWORD_DEFAULT),
+            $adminName,
+            'admin'
         ]);
     }
 } catch (PDOException $e) {
